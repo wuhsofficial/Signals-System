@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Signals &amp; Systems — Final Exam Formula Sheet</title>
+
+<!-- ===== MathJax (SVG output = crisp vector math, no font glitches) ===== -->
+<script>
+  window.MathJax = {
+    tex: {
+      inlineMath: [['\\(', '\\)']],
+      displayMath: [['\\[', '\\]']],
+      processEscapes: true,
+      tags: 'none'
+    },
+    svg: { fontCache: 'global', scale: 1.04 },
+    options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] },
+    startup: {
+      ready: () => {
+        MathJax.startup.defaultReady();
+        MathJax.startup.promise.then(() => {
+          var l = document.getElementById('mjx-loading');
+          if (l) l.style.display = 'none';
+        });
+      }
+    }
+  };
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-svg.js" async></script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --bg:#faf6ee;
+  --paper:#fffdf8;
+  --ink:#211c15;
+  --ink-soft:#5d5447;
+  --ink-faint:#8a7f6e;
+  --line:#e7dccb;
+  --line-strong:#d8ccb6;
+  --accent:#1f3a5f;
+  --clo2:#0f766e;   /* convolution  */
+  --clo3:#3b3699;   /* fourier      */
+  --clo4:#b45309;   /* discrete / z */
+  --warn-bg:#fdeede;
+  --warn-line:#e6b384;
+  --warn-ink:#8a4710;
+  --shadow:0 1px 2px rgba(60,45,20,.05),0 6px 22px -10px rgba(60,45,20,.18);
+  --radius:14px;
+}
+
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;text-size-adjust:100%;}
+body{
+  margin:0;
+  background:
+    radial-gradient(1200px 520px at 100% -8%, rgba(180,83,9,.06), transparent 60%),
+    radial-gradient(1000px 520px at -8% 18%, rgba(31,58,95,.06), transparent 55%),
+    var(--bg);
+  color:var(--ink);
+  font-family:"IBM Plex Sans",-apple-system,BlinkMacSystemFont,sans-serif;
+  font-size:16px;
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+
+.wrap{max-width:1080px;margin:0 auto;padding:0 22px 96px;}
+
+/* ---------- Header ---------- */
+.top-accent{height:5px;background:linear-gradient(90deg,var(--clo2) 0%,var(--clo2) 33%,var(--clo3) 33%,var(--clo3) 66%,var(--clo4) 66%,var(--clo4) 100%);}
+header.masthead{padding:46px 0 22px;border-bottom:2px solid var(--ink);position:relative;}
+.eyebrow{font-family:"IBM Plex Mono",monospace;font-size:12.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--accent);font-weight:600;margin-bottom:14px;}
+h1.title{
+  font-family:"Fraunces",serif;
+  font-weight:600;
+  font-size:clamp(2.1rem,5.4vw,3.5rem);
+  line-height:1.04;
+  letter-spacing:-.015em;
+  margin:0 0 10px;
+  color:var(--ink);
+}
+h1.title .amp{font-style:italic;font-weight:400;color:var(--clo4);}
+.subtitle{font-size:1.02rem;color:var(--ink-soft);max-width:60ch;margin:0;}
+.meta-row{display:flex;flex-wrap:wrap;gap:8px 18px;margin-top:18px;font-family:"IBM Plex Mono",monospace;font-size:12.5px;color:var(--ink-faint);}
+.meta-row b{color:var(--ink-soft);font-weight:600;}
+
+/* ---------- Scope / notice boxes ---------- */
+.notices{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:26px 0 8px;}
+@media(max-width:720px){.notices{grid-template-columns:1fr;}}
+.note{border:1px solid var(--line-strong);background:var(--paper);border-radius:var(--radius);padding:16px 18px;box-shadow:var(--shadow);}
+.note h3{margin:0 0 8px;font-family:"IBM Plex Mono",monospace;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);font-weight:600;}
+.note p{margin:0;font-size:.93rem;color:var(--ink-soft);}
+.note.warn{background:var(--warn-bg);border-color:var(--warn-line);}
+.note.warn h3{color:var(--warn-ink);}
+.note.warn p{color:var(--warn-ink);}
+.note .tag{display:inline-block;font-family:"IBM Plex Mono",monospace;font-size:11px;padding:2px 8px;border-radius:999px;margin:2px 4px 0 0;border:1px solid currentColor;}
+
+/* ---------- Sticky nav ---------- */
+nav.toc{
+  position:sticky;top:0;z-index:50;
+  margin:28px -22px 0;padding:11px 22px;
+  background:rgba(250,246,238,.86);
+  backdrop-filter:saturate(160%) blur(10px);
+  -webkit-backdrop-filter:saturate(160%) blur(10px);
+  border-bottom:1px solid var(--line-strong);
+  border-top:1px solid var(--line-strong);
+}
+.toc-scroll{display:flex;gap:6px;overflow-x:auto;scrollbar-width:thin;padding-bottom:2px;}
+.toc-scroll::-webkit-scrollbar{height:5px;}
+.toc-scroll::-webkit-scrollbar-thumb{background:var(--line-strong);border-radius:99px;}
+nav.toc a{
+  flex:0 0 auto;text-decoration:none;font-size:13px;font-weight:500;
+  color:var(--ink-soft);padding:6px 12px;border-radius:999px;white-space:nowrap;
+  border:1px solid transparent;transition:.15s;
+}
+nav.toc a:hover{color:var(--ink);background:#fff;border-color:var(--line);}
+nav.toc a.active{color:#fff;background:var(--accent);border-color:var(--accent);}
+nav.toc a[data-clo="2"].active{background:var(--clo2);border-color:var(--clo2);}
+nav.toc a[data-clo="3"].active{background:var(--clo3);border-color:var(--clo3);}
+nav.toc a[data-clo="4"].active{background:var(--clo4);border-color:var(--clo4);}
+
+/* ---------- CLO band heading ---------- */
+.clo-band{display:flex;align-items:baseline;gap:14px;margin:54px 0 6px;padding-top:8px;}
+.clo-band .num{font-family:"Fraunces",serif;font-size:.95rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:4px 11px;border-radius:8px;color:#fff;}
+.clo-band h2{font-family:"Fraunces",serif;font-weight:600;font-size:clamp(1.5rem,3.6vw,2.05rem);margin:0;letter-spacing:-.01em;}
+.clo-band .desc{font-size:.9rem;color:var(--ink-faint);margin-left:auto;text-align:right;max-width:30ch;}
+.clo2 .num{background:var(--clo2);} .clo3 .num{background:var(--clo3);} .clo4 .num{background:var(--clo4);}
+.clo-rule{height:2px;border:0;margin:0 0 8px;}
+.clo2 .clo-rule{background:var(--clo2);} .clo3 .clo-rule{background:var(--clo3);} .clo4 .clo-rule{background:var(--clo4);}
+
+/* ---------- Section / topic ---------- */
+section.topic{scroll-margin-top:74px;margin-top:30px;}
+.topic > h3{
+  font-family:"Fraunces",serif;font-weight:600;font-size:1.32rem;margin:0 0 4px;
+  display:flex;align-items:center;gap:10px;letter-spacing:-.005em;
+}
+.topic > h3 .chip{font-family:"IBM Plex Mono",monospace;font-size:10.5px;font-weight:600;letter-spacing:.08em;color:var(--ink-faint);border:1px solid var(--line-strong);padding:2px 7px;border-radius:6px;text-transform:uppercase;}
+.topic > p.lead{margin:0 0 14px;color:var(--ink-soft);font-size:.95rem;}
+
+/* ---------- Formula card ---------- */
+.grid{display:grid;gap:14px;}
+.grid.two{grid-template-columns:1fr 1fr;}
+@media(max-width:760px){.grid.two{grid-template-columns:1fr;}}
+.card{
+  background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);
+  padding:14px 18px 6px;box-shadow:var(--shadow);position:relative;overflow:hidden;
+}
+.card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--accent);opacity:.55;}
+.clo2 .card::before{background:var(--clo2);} .clo3 .card::before{background:var(--clo3);} .clo4 .card::before{background:var(--clo4);}
+.card .label{
+  font-family:"IBM Plex Mono",monospace;font-size:11.5px;letter-spacing:.07em;
+  text-transform:uppercase;color:var(--ink-faint);font-weight:600;margin-bottom:2px;display:block;
+}
+.card .note-inline{font-size:.82rem;color:var(--ink-faint);margin:-2px 0 8px;font-style:italic;}
+.math{overflow-x:auto;overflow-y:hidden;padding:2px 0;}
+mjx-container{max-width:100%;}
+mjx-container[display="true"]{overflow-x:auto;overflow-y:hidden;}
+
+/* ---------- Pair / property tables ---------- */
+.tbl-wrap{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow-x:auto;-webkit-overflow-scrolling:touch;}
+table.f{width:100%;border-collapse:collapse;font-size:.95rem;}
+table.f thead th{
+  text-align:left;font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--ink-faint);font-weight:600;padding:11px 16px;
+  border-bottom:1.5px solid var(--line-strong);background:#fbf5ea;
+}
+table.f td{padding:9px 16px;border-bottom:1px solid var(--line);vertical-align:middle;}
+table.f tr:last-child td{border-bottom:0;}
+table.f tr:hover td{background:#fbf6ec;}
+table.f td.name{color:var(--ink-soft);width:38%;}
+table.f td.roc{font-family:"IBM Plex Mono",monospace;font-size:.82rem;color:var(--ink-faint);width:18%;white-space:nowrap;}
+.col-arrow{width:34px;text-align:center;color:var(--ink-faint);}
+
+/* ---------- Step list ---------- */
+ol.steps{counter-reset:s;list-style:none;padding:0;margin:6px 0 0;}
+ol.steps li{position:relative;padding:8px 8px 8px 44px;border-bottom:1px dashed var(--line);font-size:.95rem;color:var(--ink-soft);}
+ol.steps li:last-child{border-bottom:0;}
+ol.steps li::before{counter-increment:s;content:counter(s);position:absolute;left:6px;top:7px;width:26px;height:26px;display:grid;place-items:center;border-radius:50%;background:var(--accent);color:#fff;font-family:"IBM Plex Mono",monospace;font-size:13px;font-weight:600;}
+.clo2 ol.steps li::before{background:var(--clo2);}
+
+.tip{font-size:.85rem;color:var(--ink-faint);margin-top:10px;padding:10px 14px;border-left:3px solid var(--clo4);background:#fdf6ec;border-radius:0 8px 8px 0;}
+
+footer{margin-top:64px;padding-top:22px;border-top:2px solid var(--ink);font-size:.85rem;color:var(--ink-faint);}
+footer .big{font-family:"Fraunces",serif;font-size:1.05rem;color:var(--ink-soft);}
+
+#mjx-loading{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);font-family:"IBM Plex Mono",monospace;font-size:13px;color:var(--ink-faint);background:var(--paper);border:1px solid var(--line-strong);padding:14px 20px;border-radius:12px;box-shadow:var(--shadow);z-index:200;}
+
+/* ============================================================
+   MOBILE  ·  iPhone (SE → Pro Max) & Samsung Galaxy S series
+   Tables collapse into stacked formula cards; spacing tightened.
+   ============================================================ */
+@media (max-width:600px){
+  body{font-size:15px;}
+  .wrap{padding:0 14px 72px;}
+
+  /* Masthead */
+  header.masthead{padding:32px 0 18px;}
+  .eyebrow{font-size:11px;letter-spacing:.18em;margin-bottom:11px;}
+  h1.title{font-size:2.1rem;line-height:1.06;}
+  .subtitle{font-size:.95rem;}
+  .meta-row{gap:6px 14px;font-size:11px;margin-top:14px;}
+
+  /* Notice boxes */
+  .notices{gap:12px;margin:20px 0 4px;}
+  .note{padding:14px 15px;}
+  .note p{font-size:.9rem;}
+
+  /* Sticky nav — full-bleed to match 14px padding, larger tap targets */
+  nav.toc{margin:22px -14px 0;padding:9px 14px;}
+  nav.toc a{font-size:12.5px;padding:7px 12px;}
+
+  /* CLO section bands */
+  .clo-band{flex-wrap:wrap;gap:8px 12px;margin:40px 0 6px;}
+  .clo-band h2{font-size:1.55rem;}
+  .clo-band .num{font-size:.78rem;padding:3px 9px;}
+  .clo-band .desc{flex-basis:100%;margin-left:0;text-align:left;font-size:.82rem;margin-top:0;}
+
+  /* Topic headings */
+  .topic{scroll-margin-top:66px;}
+  .topic > h3{font-size:1.16rem;flex-wrap:wrap;gap:6px;}
+  .topic > h3 .chip{font-size:10px;}
+  .topic > p.lead{font-size:.9rem;}
+
+  /* Single column everywhere */
+  .grid.two{grid-template-columns:1fr;}
+
+  /* Cards */
+  .card{padding:13px 15px 5px;}
+  .card .label{font-size:10.5px;}
+
+  /* Wide display math scrolls smoothly inside its card */
+  .math{-webkit-overflow-scrolling:touch;}
+
+  /* Step list */
+  ol.steps li{padding:7px 6px 7px 40px;font-size:.9rem;}
+  ol.steps li::before{width:24px;height:24px;left:5px;top:7px;font-size:12px;}
+  .tip{font-size:.82rem;padding:9px 12px;}
+
+  /* ---------- TABLES → stacked formula cards ---------- */
+  .tbl-wrap{background:transparent;border:0;box-shadow:none;border-radius:0;overflow:visible;}
+  table.f,table.f tbody{display:block;width:100%;}
+  table.f thead{display:none;}
+  table.f tr{
+    display:block;background:var(--paper);border:1px solid var(--line);
+    border-radius:12px;box-shadow:var(--shadow);
+    padding:11px 14px 9px;margin-bottom:11px;position:relative;overflow:hidden;
+  }
+  table.f tr::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--accent);opacity:.5;}
+  .clo3 table.f tr::before{background:var(--clo3);}
+  .clo4 table.f tr::before{background:var(--clo4);}
+  table.f tr:hover td{background:transparent;}
+  table.f td{
+    display:block;border:0;padding:3px 0;font-size:.92rem;width:auto;
+    overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;
+  }
+  table.f td.name{
+    font-size:1.02rem;font-weight:600;color:var(--ink);width:auto;
+    padding:0 0 6px;margin-bottom:4px;border-bottom:1px solid var(--line);
+  }
+  table.f td.col-arrow{display:none !important;}
+  table.f td.roc{
+    width:auto;display:inline-block;margin-top:5px;
+    font-size:.72rem;color:var(--ink-faint);
+    border:1px solid var(--line-strong);border-radius:999px;padding:1px 9px;
+  }
+
+  /* Column labels so stacked PROPERTY cells stay unambiguous */
+  .props-tf   td:nth-of-type(2):not([colspan])::before{content:"Time domain";}
+  .props-tf   td:nth-of-type(3):not([colspan])::before{content:"Frequency domain";}
+  .props-z    td:nth-of-type(2):not([colspan])::before{content:"Sequence";}
+  .props-z    td:nth-of-type(3):not([colspan])::before{content:"z-domain";}
+  .props-dtft td:nth-of-type(2):not([colspan])::before{content:"Sequence";}
+  .props-dtft td:nth-of-type(3):not([colspan])::before{content:"Spectrum";}
+  .props-tf td::before,.props-z td::before,.props-dtft td::before{
+    display:block;font-family:"IBM Plex Mono",monospace;font-size:9.5px;
+    letter-spacing:.08em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:1px;
+  }
+}
+
+/* Very small phones — Galaxy S base (~360px), iPhone SE (375px) */
+@media (max-width:380px){
+  body{font-size:14.5px;}
+  .wrap{padding:0 11px 64px;}
+  nav.toc{margin:20px -11px 0;padding:8px 11px;}
+  h1.title{font-size:1.92rem;}
+  .clo-band h2{font-size:1.4rem;}
+  .topic > h3{font-size:1.08rem;}
+  .card{padding:12px 13px 4px;}
+  table.f tr{padding:10px 12px 8px;}
+  table.f td{font-size:.88rem;}
+  table.f td.name{font-size:.98rem;}
+}
+
+@media print{
+  body{background:#fff;}
+  nav.toc,#mjx-loading,.top-accent{display:none !important;}
+  .card,.tbl-wrap,.note{box-shadow:none;break-inside:avoid;}
+  section.topic{break-inside:avoid;}
+  .clo-band{break-after:avoid;}
+  a{color:inherit;}
+  .wrap{padding-bottom:0;}
+}
+</style>
+</head>
+<body>
+<div id="mjx-loading">Typesetting formulas…</div>
+<div class="top-accent"></div>
+
+<div class="wrap">
+
+  <header class="masthead">
+    <div class="eyebrow">Final Examination · Reference Card</div>
+    <h1 class="title">Signals <span class="amp">&amp;</span> Systems</h1>
+    <p class="subtitle">A complete formula sheet for convolution, Fourier series &amp; transform, sampling, and the discrete-time / z-transform world — everything in one clean place.</p>
+    <div class="meta-row">
+      <span><b>Coverage:</b> CLO 2 · 3 · 4</span>
+      <span><b>Reference:</b> Lathi, <i>Linear Systems &amp; Signals</i></span>
+      <span><b>Emphasis:</b> Convolution, Fourier, z-transform</span>
+    </div>
+  </header>
+
+  <div class="notices">
+    <div class="note">
+      <h3>What's on the exam</h3>
+      <p>Per the syllabus &amp; instructor note, the final covers
+        <span class="tag" style="color:var(--clo2)">CLO 2 · Convolution</span>
+        <span class="tag" style="color:var(--clo3)">CLO 3 · Fourier</span>
+        <span class="tag" style="color:var(--clo4)">CLO 4 · Discrete &amp; z</span>
+        with emphasis on convolution (direct &amp; graphical), Fourier series &amp; transform with properties, and the z-transform. CLO 1 (signal/system basics) is <b>not</b> tested — only a few building blocks are kept here because the other formulas rely on them.</p>
+    </div>
+    <div class="note warn">
+      <h3>⚠ Instructor note — memorise this</h3>
+      <p><b>The z-transform table will NOT be provided.</b> The z-transform pairs &amp; properties below must be known by heart. The geometric-series identities (in §Discrete-Time) let you derive any pair from the definition if you blank out.</p>
+    </div>
+  </div>
+
+  <!-- ============ NAV ============ -->
+  <nav class="toc">
+    <div class="toc-scroll">
+      <a href="#foundations" data-clo="0">Building Blocks</a>
+      <a href="#convolution" data-clo="2">Convolution</a>
+      <a href="#trig-fs" data-clo="3">Trig. FS</a>
+      <a href="#exp-fs" data-clo="3">Exp. FS</a>
+      <a href="#ft" data-clo="3">Fourier Transform</a>
+      <a href="#ft-props" data-clo="3">FT Properties</a>
+      <a href="#sampling" data-clo="3">Sampling</a>
+      <a href="#dt-systems" data-clo="4">DT Signals</a>
+      <a href="#ztransform" data-clo="4">z-Transform</a>
+      <a href="#zprops" data-clo="4">z Properties</a>
+      <a href="#diffeq" data-clo="4">Difference Eqns</a>
+      <a href="#dtfs-dtft" data-clo="4">DTFS / DTFT</a>
+      <a href="#dft" data-clo="4">DFT / FFT</a>
+    </div>
+  </nav>
+
+  <!-- =================================================================== -->
+  <!-- BUILDING BLOCKS                                                      -->
+  <!-- =================================================================== -->
+  <div class="clo0">
+    <div class="clo-band" style="margin-top:40px;">
+      <span class="num" style="background:var(--accent)">Core</span>
+      <h2>Building Blocks</h2>
+      <span class="desc">Elementary signals &amp; quantities the rest of the sheet uses</span>
+    </div>
+    <hr class="clo-rule" style="background:var(--accent)">
+
+    <section class="topic" id="foundations">
+      <div class="grid two">
+        <div class="card">
+          <span class="label">Unit step &amp; unit impulse</span>
+          <div class="math">\[ u(t)=\begin{cases}1,&t\ge 0\\[2pt]0,&t<0\end{cases}\qquad u[n]=\begin{cases}1,&n\ge 0\\[2pt]0,&n<0\end{cases} \]</div>
+        </div>
+        <div class="card">
+          <span class="label">Impulse — sifting property</span>
+          <div class="math">\[ \int_{-\infty}^{\infty}\!\delta(t)\,dt=1,\qquad \int_{-\infty}^{\infty}\! x(t)\,\delta(t-t_0)\,dt=x(t_0) \]</div>
+        </div>
+        <div class="card">
+          <span class="label">Discrete impulse / step link</span>
+          <div class="math">\[ \delta[n]=u[n]-u[n-1],\qquad u[n]=\sum_{k=-\infty}^{n}\delta[k] \]</div>
+        </div>
+        <div class="card">
+          <span class="label">Signal energy &amp; power</span>
+          <div class="math">\[ E_x=\int_{-\infty}^{\infty}\!|x(t)|^2\,dt,\quad P_x=\lim_{T\to\infty}\frac{1}{T}\int_{-T/2}^{T/2}\!|x(t)|^2\,dt \]</div>
+        </div>
+      </div>
+      <div class="tip"><b>Operations used in graphical convolution:</b> time-shift \(x(t-T)\) shifts <i>right</i> by \(T\); reflection is \(x(-t)\); scaling \(x(at)\) compresses for \(|a|>1\).</div>
+    </section>
+  </div>
+
+  <!-- =================================================================== -->
+  <!-- CLO 2 — CONVOLUTION                                                  -->
+  <!-- =================================================================== -->
+  <div class="clo2">
+    <div class="clo-band">
+      <span class="num">CLO 2</span>
+      <h2>Convolution</h2>
+      <span class="desc">Zero-state response of an LTI system — direct &amp; graphical</span>
+    </div>
+    <hr class="clo-rule">
+
+    <section class="topic" id="convolution">
+      <h3>Convolution Integral <span class="chip">Ch 2</span></h3>
+      <p class="lead">The zero-state response of a continuous-time LTI system is the input convolved with the impulse response \(h(t)\).</p>
+
+      <div class="grid">
+        <div class="card">
+          <span class="label">Definition (both equivalent forms)</span>
+          <div class="math">\[ y(t)=x(t)*h(t)=\int_{-\infty}^{\infty}\! x(\tau)\,h(t-\tau)\,d\tau=\int_{-\infty}^{\infty}\! x(t-\tau)\,h(\tau)\,d\tau \]</div>
+        </div>
+      </div>
+
+      <div class="grid two">
+        <div class="card">
+          <span class="label">Causal input &amp; system</span>
+          <div class="math">\[ y(t)=\int_{0}^{t} x(\tau)\,h(t-\tau)\,d\tau \]</div>
+          <p class="note-inline">Both \(x\) and \(h\) are zero for \(t<0\).</p>
+        </div>
+        <div class="card">
+          <span class="label">Convolution with an impulse</span>
+          <div class="math">\[ x(t)*\delta(t)=x(t),\qquad x(t)*\delta(t-T)=x(t-T) \]</div>
+        </div>
+      </div>
+
+      <div class="grid two">
+        <div class="card">
+          <span class="label">Algebraic properties</span>
+          <div class="math">\[ \begin{aligned}
+          &\text{Commutative:}\ \ x*h=h*x\\
+          &\text{Distributive:}\ \ x*(h_1+h_2)=x*h_1+x*h_2\\
+          &\text{Associative:}\ \ x*(h_1*h_2)=(x*h_1)*h_2
+          \end{aligned} \]</div>
+        </div>
+        <div class="card">
+          <span class="label">Shift &amp; width properties</span>
+          <div class="math">\[ \begin{aligned}
+          &x(t-T_1)*h(t-T_2)=c(t-T_1-T_2),\ \ c=x*h\\[4pt]
+          &\text{width: } w_y=w_x+w_h
+          \end{aligned} \]</div>
+        </div>
+      </div>
+
+      <div class="grid two">
+        <div class="card">
+          <span class="label">Useful closed-form results</span>
+          <div class="math">\[ \begin{aligned}
+          e^{\lambda_1 t}u(t)*e^{\lambda_2 t}u(t)&=\frac{e^{\lambda_1 t}-e^{\lambda_2 t}}{\lambda_1-\lambda_2}\,u(t),\ \ \lambda_1\neq\lambda_2\\[6pt]
+          u(t)*u(t)&=t\,u(t)
+          \end{aligned} \]</div>
+        </div>
+        <div class="card">
+          <span class="label">Graphical convolution — procedure</span>
+          <ol class="steps">
+            <li>Reflect \(h(\tau)\) about the vertical axis → \(h(-\tau)\).</li>
+            <li>Shift \(h(-\tau)\) by \(t\) → \(h(t-\tau)\).</li>
+            <li>Multiply: \(x(\tau)\,h(t-\tau)\).</li>
+            <li>Integrate (area) over \(\tau\) for each \(t\) to get \(y(t)\).</li>
+          </ol>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- =================================================================== -->
+  <!-- CLO 3 — FOURIER                                                      -->
+  <!-- =================================================================== -->
+  <div class="clo3">
+    <div class="clo-band">
+      <span class="num">CLO 3</span>
+      <h2>Fourier Analysis</h2>
+      <span class="desc">Series for periodic signals, transform for aperiodic signals, &amp; sampling</span>
+    </div>
+    <hr class="clo-rule">
+
+    <!-- TRIG FS -->
+    <section class="topic" id="trig-fs">
+      <h3>Trigonometric Fourier Series <span class="chip">Ch 6</span></h3>
+      <p class="lead">For a periodic signal of period \(T_0\); fundamental frequency \(\omega_0=\dfrac{2\pi}{T_0}\).</p>
+
+      <div class="grid">
+        <div class="card">
+          <span class="label">Series</span>
+          <div class="math">\[ x(t)=a_0+\sum_{n=1}^{\infty}\big[a_n\cos(n\omega_0 t)+b_n\sin(n\omega_0 t)\big] \]</div>
+        </div>
+        <div class="card">
+          <span class="label">Coefficients (integrate over one period)</span>
+          <div class="math">\[ a_0=\frac{1}{T_0}\!\int_{T_0}\! x(t)\,dt,\quad
+          a_n=\frac{2}{T_0}\!\int_{T_0}\! x(t)\cos(n\omega_0 t)\,dt,\quad
+          b_n=\frac{2}{T_0}\!\int_{T_0}\! x(t)\sin(n\omega_0 t)\,dt \]</div>
+        </div>
+      </div>
+
+      <div class="grid two">
+        <div class="card">
+          <span class="label">Compact (amplitude–phase) form</span>
+          <div class="math">\[ x(t)=C_0+\sum_{n=1}^{\infty}C_n\cos(n\omega_0 t+\theta_n) \]</div>
+        </div>
+        <div class="card">
+          <span class="label">Conversions</span>
+          <div class="math">\[ C_0=a_0,\quad C_n=\sqrt{a_n^{2}+b_n^{2}},\quad \theta_n=-\tan^{-1}\!\frac{b_n}{a_n} \]
+          \[ a_n=C_n\cos\theta_n,\qquad b_n=-C_n\sin\theta_n \]</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- EXP FS -->
+    <section class="topic" id="exp-fs">
+      <h3>Exponential Fourier Series <span class="chip">Ch 6</span></h3>
+
+      <div class="grid two">
+        <div class="card">
+          <span class="label">Synthesis &amp; analysis</span>
+          <div class="math">\[ x(t)=\sum_{n=-\infty}^{\infty}D_n\,e^{jn\omega_0 t} \]
+          \[ D_n=\frac{1}{T_0}\!\int_{T_0}\! x(t)\,e^{-jn\omega_0 t}\,dt \]</div>
+        </div>
+        <div class="card">
+          <span class="label">Relation to trigonometric coefficients</span>
+          <div class="math">\[ \begin{aligned}
+          D_0&=a_0=C_0\\
+          D_n&=\tfrac{1}{2}(a_n-jb_n)=\tfrac{C_n}{2}\,e^{\,j\theta_n}\\
+          D_{-n}&=\tfrac{1}{2}(a_n+jb_n)=\tfrac{C_n}{2}\,e^{-j\theta_n}
+          \end{aligned} \]</div>
+        </div>
+      </div>
+
+      <div class="grid two">
+        <div class="card">
+          <span class="label">Magnitude &amp; phase link</span>
+          <div class="math">\[ C_n=2\,|D_n|\ \ (n\ge 1),\qquad \theta_n=\angle D_n \]</div>
+        </div>
+        <div class="card">
+          <span class="label">Parseval's theorem (power)</span>
+          <div class="math">\[ P_x=\frac{1}{T_0}\!\int_{T_0}\!|x(t)|^2 dt=\sum_{n=-\infty}^{\infty}|D_n|^2=C_0^{2}+\tfrac{1}{2}\sum_{n=1}^{\infty}C_n^{2} \]</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FOURIER TRANSFORM -->
+    <section class="topic" id="ft">
+      <h3>The Fourier Transform <span class="chip">Ch 7</span></h3>
+      <p class="lead">For aperiodic (energy) signals. <b>Convention used here:</b> \(\operatorname{sinc}(x)=\dfrac{\sin x}{x}\) (Lathi). Check your notes if a different sinc is used.</p>
+
+      <div class="grid two">
+        <div class="card">
+          <span class="label">Analysis (forward)</span>
+          <div class="math">\[ X(\omega)=\int_{-\infty}^{\infty}\! x(t)\,e^{-j\omega t}\,dt \]</div>
+        </div>
+        <div class="card">
+          <span class="label">Synthesis (inverse)</span>
+          <div class="math">\[ x(t)=\frac{1}{2\pi}\int_{-\infty}^{\infty}\! X(\omega)\,e^{\,j\omega t}\,d\omega \]</div>
+        </div>
+      </div>
+
+      <h3 style="font-size:1.05rem;margin-top:18px;">Common Transform Pairs</h3>
+      <div class="tbl-wrap">
+        <table class="f">
+          <thead><tr><th>Signal \(x(t)\)</th><th class="col-arrow"></th><th>Transform \(X(\omega)\)</th></tr></thead>
+          <tbody>
+            <tr><td class="name">\(\delta(t)\)</td><td class="col-arrow">⟷</td><td>\(1\)</td></tr>
+            <tr><td class="name">\(1\)</td><td class="col-arrow">⟷</td><td>\(2\pi\,\delta(\omega)\)</td></tr>
+            <tr><td class="name">\(\delta(t-t_0)\)</td><td class="col-arrow">⟷</td><td>\(e^{-j\omega t_0}\)</td></tr>
+            <tr><td class="name">\(e^{\,j\omega_0 t}\)</td><td class="col-arrow">⟷</td><td>\(2\pi\,\delta(\omega-\omega_0)\)</td></tr>
+            <tr><td class="name">\(\cos(\omega_0 t)\)</td><td class="col-arrow">⟷</td><td>\(\pi\big[\delta(\omega-\omega_0)+\delta(\omega+\omega_0)\big]\)</td></tr>
+            <tr><td class="name">\(\sin(\omega_0 t)\)</td><td class="col-arrow">⟷</td><td>\(j\pi\big[\delta(\omega+\omega_0)-\delta(\omega-\omega_0)\big]\)</td></tr>
+            <tr><td class="name">\(u(t)\)</td><td class="col-arrow">⟷</td><td>\(\pi\,\delta(\omega)+\dfrac{1}{j\omega}\)</td></tr>
+            <tr><td class="name">\(\operatorname{sgn}(t)\)</td><td class="col-arrow">⟷</td><td>\(\dfrac{2}{j\omega}\)</td></tr>
+            <tr><td class="name">\(e^{-at}u(t),\ a>0\)</td><td class="col-arrow">⟷</td><td>\(\dfrac{1}{a+j\omega}\)</td></tr>
+            <tr><td class="name">\(e^{at}u(-t),\ a>0\)</td><td class="col-arrow">⟷</td><td>\(\dfrac{1}{a-j\omega}\)</td></tr>
+            <tr><td class="name">\(e^{-a|t|},\ a>0\)</td><td class="col-arrow">⟷</td><td>\(\dfrac{2a}{a^{2}+\omega^{2}}\)</td></tr>
+            <tr><td class="name">\(t\,e^{-at}u(t),\ a>0\)</td><td class="col-arrow">⟷</td><td>\(\dfrac{1}{(a+j\omega)^{2}}\)</td></tr>
+            <tr><td class="name">\(\operatorname{rect}\!\left(\dfrac{t}{\tau}\right)\)</td><td class="col-arrow">⟷</td><td>\(\tau\,\operatorname{sinc}\!\left(\dfrac{\omega\tau}{2}\right)\)</td></tr>
+            <tr><td class="name">\(\dfrac{W}{\pi}\operatorname{sinc}(Wt)\)</td><td class="col-arrow">⟷</td><td>\(\operatorname{rect}\!\left(\dfrac{\omega}{2W}\right)\)</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- FT PROPERTIES -->
+    <section class="topic" id="ft-props">
+      <h3>Properties of the Fourier Transform <span class="chip">Ch 7</span></h3>
+      <p class="lead">Let \(x(t)\!\leftrightarrow\!X(\omega)\) and \(y(t)\!\leftrightarrow\!Y(\omega)\).</p>
+      <div class="tbl-wrap">
+        <table class="f props-tf">
+          <thead><tr><th>Property</th><th>Time domain</th><th>Frequency domain</th></tr></thead>
+          <tbody>
+            <tr><td class="name">Linearity</td><td>\(a_1 x_1(t)+a_2 x_2(t)\)</td><td>\(a_1 X_1(\omega)+a_2 X_2(\omega)\)</td></tr>
+            <tr><td class="name">Time shift</td><td>\(x(t-t_0)\)</td><td>\(X(\omega)\,e^{-j\omega t_0}\)</td></tr>
+            <tr><td class="name">Frequency shift</td><td>\(x(t)\,e^{\,j\omega_0 t}\)</td><td>\(X(\omega-\omega_0)\)</td></tr>
+            <tr><td class="name">Time scaling</td><td>\(x(at)\)</td><td>\(\dfrac{1}{|a|}\,X\!\left(\dfrac{\omega}{a}\right)\)</td></tr>
+            <tr><td class="name">Time reversal</td><td>\(x(-t)\)</td><td>\(X(-\omega)\)</td></tr>
+            <tr><td class="name">Duality</td><td>\(X(t)\)</td><td>\(2\pi\,x(-\omega)\)</td></tr>
+            <tr><td class="name">Convolution (time)</td><td>\(x(t)*y(t)\)</td><td>\(X(\omega)\,Y(\omega)\)</td></tr>
+            <tr><td class="name">Multiplication</td><td>\(x(t)\,y(t)\)</td><td>\(\dfrac{1}{2\pi}\,X(\omega)*Y(\omega)\)</td></tr>
+            <tr><td class="name">Time differentiation</td><td>\(\dfrac{d^{n}x}{dt^{n}}\)</td><td>\((j\omega)^{n}X(\omega)\)</td></tr>
+            <tr><td class="name">Time integration</td><td>\(\displaystyle\int_{-\infty}^{t}\! x(\tau)\,d\tau\)</td><td>\(\dfrac{X(\omega)}{j\omega}+\pi X(0)\,\delta(\omega)\)</td></tr>
+            <tr><td class="name">Freq. differentiation</td><td>\(t\,x(t)\)</td><td>\(j\,\dfrac{dX(\omega)}{d\omega}\)</td></tr>
+            <tr><td class="name">Conjugation</td><td>\(x^{*}(t)\)</td><td>\(X^{*}(-\omega)\)</td></tr>
+            <tr><td class="name">Parseval (energy)</td><td colspan="2">\(\displaystyle\int_{-\infty}^{\infty}\!|x(t)|^{2}\,dt=\dfrac{1}{2\pi}\int_{-\infty}^{\infty}\!|X(\omega)|^{2}\,d\omega\)</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- SAMPLING -->
+    <section class="topic" id="sampling">
+      <h3>Sampling — Continuous to Discrete <span class="chip">Ch 8</span></h3>
+      <p class="lead">For a signal band-limited to \(B\) Hz (i.e. \(\omega_{\max}=2\pi B\)).</p>
+      <div class="grid two">
+        <div class="card">
+          <span class="label">Sampling theorem (Nyquist)</span>
+          <div class="math">\[ f_s\ge 2B,\qquad \omega_s=\frac{2\pi}{T},\qquad T\le\frac{1}{2B} \]</div>
+          <p class="note-inline">Nyquist rate \(=2B\); Nyquist interval \(=\tfrac{1}{2B}\); aliasing occurs if \(f_s<2B\).</p>
+        </div>
+        <div class="card">
+          <span class="label">Spectrum of the sampled signal</span>
+          <div class="math">\[ \overline{X}(\omega)=\frac{1}{T}\sum_{n=-\infty}^{\infty}X(\omega-n\omega_s) \]</div>
+          <p class="note-inline">The spectrum repeats every \(\omega_s\); reconstruction needs an ideal lowpass filter.</p>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- =================================================================== -->
+  <!-- CLO 4 — DISCRETE TIME & Z                                            -->
+  <!-- =================================================================== -->
+  <div class="clo4">
+    <div class="clo-band">
+      <span class="num">CLO 4</span>
+      <h2>Discrete-Time &amp; z-Transform</h2>
+      <span class="desc">DT systems, the z-transform, difference equations, DTFS/DTFT, DFT &amp; FFT</span>
+    </div>
+    <hr class="clo-rule">
+
+    <!-- DT SIGNALS -->
+    <section class="topic" id="dt-systems">
+      <h3>Discrete-Time Signals &amp; Systems <span class="chip">Ch 3</span></h3>
+
+      <div class="grid">
+        <div class="card">
+          <span class="label">Convolution sum (zero-state response)</span>
+          <div class="math">\[ y[n]=x[n]*h[n]=\sum_{k=-\infty}^{\infty}x[k]\,h[n-k]=\sum_{k=-\infty}^{\infty}x[n-k]\,h[k] \]</div>
+        </div>
+      </div>
+
+      <div class="grid two">
+        <div class="card">
+          <span class="label">Impulse properties</span>
+          <div class="math">\[ x[n]*\delta[n]=x[n],\qquad x[n]*\delta[n-m]=x[n-m] \]</div>
+        </div>
+        <div class="card" style="border-color:var(--warn-line);background:var(--warn-bg);">
+          <span class="label" style="color:var(--warn-ink)">Geometric sums — your safety net</span>
+          <div class="math">\[ \sum_{n=0}^{N-1} r^{n}=\frac{1-r^{N}}{1-r}\ (r\neq 1),\qquad \sum_{n=0}^{\infty} r^{n}=\frac{1}{1-r}\ (|r|<1) \]</div>
+          <p class="note-inline" style="color:var(--warn-ink)">Use these to derive any z-transform from the definition.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Z TRANSFORM -->
+    <section class="topic" id="ztransform">
+      <h3>The z-Transform <span class="chip">Ch 5</span></h3>
+      <div class="grid two">
+        <div class="card">
+          <span class="label">Bilateral</span>
+          <div class="math">\[ X(z)=\sum_{n=-\infty}^{\infty}x[n]\,z^{-n} \]</div>
+        </div>
+        <div class="card">
+          <span class="label">Unilateral (causal)</span>
+          <div class="math">\[ X(z)=\sum_{n=0}^{\infty}x[n]\,z^{-n} \]</div>
+        </div>
+      </div>
+
+      <h3 style="font-size:1.05rem;margin-top:18px;">z-Transform Pairs &nbsp;<span class="chip" style="color:var(--warn-ink);border-color:var(--warn-line);">not provided in exam — memorise</span></h3>
+      <div class="tbl-wrap">
+        <table class="f">
+          <thead><tr><th>Sequence \(x[n]\)</th><th class="col-arrow"></th><th>\(X(z)\)</th><th class="roc">ROC</th></tr></thead>
+          <tbody>
+            <tr><td class="name">\(\delta[n]\)</td><td class="col-arrow">⟷</td><td>\(1\)</td><td class="roc">all \(z\)</td></tr>
+            <tr><td class="name">\(\delta[n-m]\)</td><td class="col-arrow">⟷</td><td>\(z^{-m}\)</td><td class="roc">\(z\neq 0\)</td></tr>
+            <tr><td class="name">\(u[n]\)</td><td class="col-arrow">⟷</td><td>\(\dfrac{z}{z-1}\)</td><td class="roc">\(|z|>1\)</td></tr>
+            <tr><td class="name">\(-u[-n-1]\)</td><td class="col-arrow">⟷</td><td>\(\dfrac{z}{z-1}\)</td><td class="roc">\(|z|<1\)</td></tr>
+            <tr><td class="name">\(\gamma^{n}u[n]\)</td><td class="col-arrow">⟷</td><td>\(\dfrac{z}{z-\gamma}\)</td><td class="roc">\(|z|>|\gamma|\)</td></tr>
+            <tr><td class="name">\(-\gamma^{n}u[-n-1]\)</td><td class="col-arrow">⟷</td><td>\(\dfrac{z}{z-\gamma}\)</td><td class="roc">\(|z|<|\gamma|\)</td></tr>
+            <tr><td class="name">\(n\,u[n]\)</td><td class="col-arrow">⟷</td><td>\(\dfrac{z}{(z-1)^{2}}\)</td><td class="roc">\(|z|>1\)</td></tr>
+            <tr><td class="name">\(n^{2}\,u[n]\)</td><td class="col-arrow">⟷</td><td>\(\dfrac{z(z+1)}{(z-1)^{3}}\)</td><td class="roc">\(|z|>1\)</td></tr>
+            <tr><td class="name">\(n\,\gamma^{n}u[n]\)</td><td class="col-arrow">⟷</td><td>\(\dfrac{\gamma z}{(z-\gamma)^{2}}\)</td><td class="roc">\(|z|>|\gamma|\)</td></tr>
+            <tr><td class="name">\(\cos(\beta n)\,u[n]\)</td><td class="col-arrow">⟷</td><td>\(\dfrac{z(z-\cos\beta)}{z^{2}-2\cos\beta\,z+1}\)</td><td class="roc">\(|z|>1\)</td></tr>
+            <tr><td class="name">\(\sin(\beta n)\,u[n]\)</td><td class="col-arrow">⟷</td><td>\(\dfrac{z\sin\beta}{z^{2}-2\cos\beta\,z+1}\)</td><td class="roc">\(|z|>1\)</td></tr>
+            <tr><td class="name">\(\gamma^{n}\cos(\beta n)\,u[n]\)</td><td class="col-arrow">⟷</td><td>\(\dfrac{z(z-\gamma\cos\beta)}{z^{2}-2\gamma\cos\beta\,z+\gamma^{2}}\)</td><td class="roc">\(|z|>|\gamma|\)</td></tr>
+            <tr><td class="name">\(\gamma^{n}\sin(\beta n)\,u[n]\)</td><td class="col-arrow">⟷</td><td>\(\dfrac{z\,\gamma\sin\beta}{z^{2}-2\gamma\cos\beta\,z+\gamma^{2}}\)</td><td class="roc">\(|z|>|\gamma|\)</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Z PROPERTIES -->
+    <section class="topic" id="zprops">
+      <h3>Properties of the z-Transform <span class="chip">Ch 5</span></h3>
+      <p class="lead">Shift properties shown for the <b>unilateral</b> transform (these carry the initial conditions for difference equations).</p>
+      <div class="tbl-wrap">
+        <table class="f props-z">
+          <thead><tr><th>Property</th><th>Sequence</th><th>z-domain</th></tr></thead>
+          <tbody>
+            <tr><td class="name">Linearity</td><td>\(a_1x_1[n]+a_2x_2[n]\)</td><td>\(a_1X_1(z)+a_2X_2(z)\)</td></tr>
+            <tr><td class="name">Right shift (delay)</td><td>\(x[n-m]\,u[n-m]\)</td><td>\(z^{-m}X(z)\)</td></tr>
+            <tr><td class="name">Right shift, 1 step</td><td>\(x[n-1]\,u[n]\)</td><td>\(z^{-1}X(z)+x[-1]\)</td></tr>
+            <tr><td class="name">Right shift, 2 steps</td><td>\(x[n-2]\,u[n]\)</td><td>\(z^{-2}X(z)+z^{-1}x[-1]+x[-2]\)</td></tr>
+            <tr><td class="name">Left shift, 1 step</td><td>\(x[n+1]\,u[n]\)</td><td>\(z\,X(z)-z\,x[0]\)</td></tr>
+            <tr><td class="name">Left shift, 2 steps</td><td>\(x[n+2]\,u[n]\)</td><td>\(z^{2}X(z)-z^{2}x[0]-z\,x[1]\)</td></tr>
+            <tr><td class="name">Scaling in z</td><td>\(\gamma^{n}x[n]\)</td><td>\(X\!\left(\dfrac{z}{\gamma}\right)\)</td></tr>
+            <tr><td class="name">Time reversal</td><td>\(x[-n]\)</td><td>\(X\!\left(\dfrac{1}{z}\right)\)</td></tr>
+            <tr><td class="name">Convolution</td><td>\(x[n]*h[n]\)</td><td>\(X(z)\,H(z)\)</td></tr>
+            <tr><td class="name">Multiply by \(n\)</td><td>\(n\,x[n]\)</td><td>\(-z\,\dfrac{dX(z)}{dz}\)</td></tr>
+            <tr><td class="name">Initial value</td><td colspan="2">\(x[0]=\displaystyle\lim_{z\to\infty}X(z)\)</td></tr>
+            <tr><td class="name">Final value</td><td colspan="2">\(\displaystyle\lim_{n\to\infty}x[n]=\lim_{z\to 1}(z-1)\,X(z)\) &nbsp;<span style="color:var(--ink-faint);font-size:.82rem;">(poles inside unit circle, ≤1 at \(z=1\))</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- DIFFERENCE EQUATIONS -->
+    <section class="topic" id="diffeq">
+      <h3>Difference Equations &amp; Transfer Function <span class="chip">Ch 5</span></h3>
+      <div class="grid">
+        <div class="card">
+          <span class="label">General LCCDE</span>
+          <div class="math">\[ \sum_{k=0}^{N}a_k\,y[n-k]=\sum_{k=0}^{M}b_k\,x[n-k] \]</div>
+        </div>
+      </div>
+      <div class="grid two">
+        <div class="card">
+          <span class="label">Transfer function</span>
+          <div class="math">\[ H(z)=\frac{Y(z)}{X(z)}=\frac{\displaystyle\sum_{k=0}^{M}b_k\,z^{-k}}{\displaystyle\sum_{k=0}^{N}a_k\,z^{-k}} \]</div>
+        </div>
+        <div class="card">
+          <span class="label">Responses</span>
+          <div class="math">\[ \begin{aligned}
+          \text{Zero-state: }& Y(z)=H(z)\,X(z)\\
+          \text{Impulse: }& h[n]=\mathcal{Z}^{-1}\{H(z)\}
+          \end{aligned} \]</div>
+        </div>
+      </div>
+      <div class="tip"><b>Solving with initial conditions:</b> take the unilateral z-transform of both sides, substitute the left-/right-shift properties (which inject \(y[-1],y[-2],\dots\)), solve algebraically for \(Y(z)\), then invert via partial fractions using the pairs above.</div>
+    </section>
+
+    <!-- DTFS / DTFT -->
+    <section class="topic" id="dtfs-dtft">
+      <h3>DTFS &amp; DTFT <span class="chip">Ch 9</span></h3>
+
+      <div class="grid two">
+        <div class="card">
+          <span class="label">Discrete-Time Fourier Series — period \(N\), \(\Omega_0=\tfrac{2\pi}{N}\)</span>
+          <div class="math">\[ x[n]=\sum_{k=0}^{N-1}D_k\,e^{\,jk\Omega_0 n} \]
+          \[ D_k=\frac{1}{N}\sum_{n=0}^{N-1}x[n]\,e^{-jk\Omega_0 n} \]</div>
+          <p class="note-inline">\(D_k\) is periodic: \(D_{k+N}=D_k\).</p>
+        </div>
+        <div class="card">
+          <span class="label">Discrete-Time Fourier Transform</span>
+          <div class="math">\[ X(\Omega)=\sum_{n=-\infty}^{\infty}x[n]\,e^{-j\Omega n} \]
+          \[ x[n]=\frac{1}{2\pi}\int_{2\pi}\! X(\Omega)\,e^{\,j\Omega n}\,d\Omega \]</div>
+          <p class="note-inline">\(X(\Omega)\) is periodic with period \(2\pi\).</p>
+        </div>
+      </div>
+
+      <h3 style="font-size:1.05rem;margin-top:18px;">DTFT — Pairs &amp; Properties</h3>
+      <div class="grid two">
+        <div class="tbl-wrap">
+          <table class="f">
+            <thead><tr><th>\(x[n]\)</th><th class="col-arrow"></th><th>\(X(\Omega)\)</th></tr></thead>
+            <tbody>
+              <tr><td class="name">\(\delta[n]\)</td><td class="col-arrow">⟷</td><td>\(1\)</td></tr>
+              <tr><td class="name">\(\gamma^{n}u[n],\ |\gamma|<1\)</td><td class="col-arrow">⟷</td><td>\(\dfrac{1}{1-\gamma e^{-j\Omega}}\)</td></tr>
+              <tr><td class="name">\(1\)</td><td class="col-arrow">⟷</td><td>\(2\pi\!\!\displaystyle\sum_{k}\delta(\Omega-2\pi k)\)</td></tr>
+              <tr><td class="name">\(u[n]\)</td><td class="col-arrow">⟷</td><td>\(\dfrac{1}{1-e^{-j\Omega}}+\pi\!\!\displaystyle\sum_{k}\delta(\Omega-2\pi k)\)</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="tbl-wrap">
+          <table class="f props-dtft">
+            <thead><tr><th>Property</th><th>\(x[n]\)</th><th>\(X(\Omega)\)</th></tr></thead>
+            <tbody>
+              <tr><td class="name">Time shift</td><td>\(x[n-m]\)</td><td>\(e^{-j\Omega m}X(\Omega)\)</td></tr>
+              <tr><td class="name">Freq. shift</td><td>\(x[n]e^{\,j\Omega_0 n}\)</td><td>\(X(\Omega-\Omega_0)\)</td></tr>
+              <tr><td class="name">Reversal</td><td>\(x[-n]\)</td><td>\(X(-\Omega)\)</td></tr>
+              <tr><td class="name">Convolution</td><td>\(x[n]*y[n]\)</td><td>\(X(\Omega)Y(\Omega)\)</td></tr>
+              <tr><td class="name">Parseval</td><td colspan="2">\(\displaystyle\sum_{n}|x[n]|^{2}=\dfrac{1}{2\pi}\!\int_{2\pi}\!|X(\Omega)|^{2}d\Omega\)</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- DFT / FFT -->
+    <section class="topic" id="dft">
+      <h3>DFT &amp; FFT <span class="chip">Ch 8 · 9</span></h3>
+      <div class="grid two">
+        <div class="card">
+          <span class="label">\(N\)-point DFT (analysis)</span>
+          <div class="math">\[ X[k]=\sum_{n=0}^{N-1}x[n]\,e^{-j\frac{2\pi}{N}kn},\quad k=0,\dots,N-1 \]</div>
+        </div>
+        <div class="card">
+          <span class="label">Inverse DFT (synthesis)</span>
+          <div class="math">\[ x[n]=\frac{1}{N}\sum_{k=0}^{N-1}X[k]\,e^{\,j\frac{2\pi}{N}kn},\quad n=0,\dots,N-1 \]</div>
+        </div>
+      </div>
+      <div class="grid two">
+        <div class="card">
+          <span class="label">Twiddle factor &amp; matrix form</span>
+          <div class="math">\[ W_N=e^{-j\frac{2\pi}{N}}\ \Rightarrow\ X[k]=\sum_{n=0}^{N-1}x[n]\,W_N^{\,kn} \]</div>
+          <p class="note-inline">DFT = samples of the DTFT: \(X[k]=X(\Omega)\big|_{\Omega=2\pi k/N}\).</p>
+        </div>
+        <div class="card">
+          <span class="label">FFT</span>
+          <div class="math">\[ \text{operations: }\ O(N^{2})\ \longrightarrow\ O\!\left(N\log_2 N\right) \]</div>
+          <p class="note-inline">Fast algorithm for the DFT; radix-2 requires \(N=2^{m}\) (decimation in time / frequency).</p>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <footer>
+    <p class="big">Signals &amp; Systems — Final Exam Formula Sheet</p>
+    <p>Conventions follow B. P. Lathi, <i>Linear Systems &amp; Signals</i>. The <code>sinc</code> here is \(\sin x/x\). Always cross-check a couple of pairs against your own class notes, since textbook printings vary. Use <b>File → Print</b> for a clean PDF / hard copy. Best of luck on the exam — you've got this.</p>
+  </footer>
+
+</div>
+
+<script>
+/* Scrollspy for the sticky nav — defensive so it never breaks the page */
+(function(){
+  try{
+    var links = Array.prototype.slice.call(document.querySelectorAll('nav.toc a'));
+    var map = {};
+    links.forEach(function(a){
+      var id = a.getAttribute('href').slice(1);
+      var sec = document.getElementById(id);
+      if(sec) map[id] = a;
+    });
+    var sections = Object.keys(map).map(function(id){return document.getElementById(id);});
+    if(!('IntersectionObserver' in window) || sections.length===0) return;
+
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if(e.isIntersecting){
+          links.forEach(function(l){l.classList.remove('active');});
+          var a = map[e.target.id];
+          if(a){
+            a.classList.add('active');
+            a.scrollIntoView({block:'nearest',inline:'center'});
+          }
+        }
+      });
+    },{rootMargin:'-72px 0px -70% 0px',threshold:0});
+
+    sections.forEach(function(s){io.observe(s);});
+  }catch(err){/* no-op */}
+})();
+</script>
+
+</body>
+</html>
